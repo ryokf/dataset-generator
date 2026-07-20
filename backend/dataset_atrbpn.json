@@ -1,6 +1,6 @@
 [
     {
-        "akta_id": "570875922C993B4FE063B416140A9AE6",
+        "akta_id": "5708746AD1903864E063B416140A4EAD",
         "form_source": "frmPihaksetujuDukcapil",
         "input_ocr": {
             "ajb": "",
@@ -17,26 +17,26 @@
             "ktp_saksi": []
         },
         "output": {
-            "no_akta": "302/2026",
-            "tanggal_akta": "20/07/2026",
+            "no_akta": "274/2026",
+            "tanggal_akta": "22/06/2026",
             "data_penjual": {},
             "data_pihak_persetujuan": [
                 {
-                    "nik": "",
-                    "nama": "ABDUS SHOMAD",
-                    "alamat": "",
-                    "tempat_lahir": "",
-                    "tgl_lahir": "",
+                    "nik": "3321111409030002",
+                    "nama": "MUHAMMAD LUQMAN HAKIM",
+                    "alamat": "Perum Griya Mangunjiwan Permata Asri, RT 002/RW 008, Kelurahan Mangunjiwan, Kecamatan Demak, Kabupaten Demak",
+                    "tempat_lahir": "Sukoharjo",
+                    "tgl_lahir": "14/09/2003",
                     "jenis_kelamin": "Laki-laki",
                     "pekerjaan": ""
                 },
                 {
-                    "nik": "3321010511670002",
-                    "nama": "ABDUS SHOMAD",
-                    "alamat": "RT 001 / RW 001, Desa Mranggen, Kecamatan Mranggen, Kabupaten Demak",
-                    "tempat_lahir": "Demak",
-                    "tgl_lahir": "05/11/1967",
-                    "jenis_kelamin": "Laki-laki",
+                    "nik": "3321116209790006",
+                    "nama": "SEPTIANA SETYOWATI",
+                    "alamat": "Perum Griya Mangunjiwan Permata Asri, RT 002/RW 008, Kelurahan Mangunjiwan, Kecamatan Demak, Kabupaten Demak",
+                    "tempat_lahir": "Sukoharjo",
+                    "tgl_lahir": "22/09/1979",
+                    "jenis_kelamin": "Perempuan",
                     "pekerjaan": ""
                 }
             ],
