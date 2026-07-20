@@ -11,7 +11,7 @@ const datasetFile = path.join(__dirname, 'dataset_atrbpn.json');
 
 function createBaseSchema() {
     return {
-        session_id: "",
+        akta_id: "", 
         form_source: "",
         input_ocr: {
             ajb: "", npwp_penjual: "", akta_pendirian_penjual: "", ktp_persetujuan: [],
@@ -30,13 +30,18 @@ function createBaseSchema() {
 }
 
 app.post('/api/intercept', (req, res) => {
-    const { session_id, form_id, timestamp, data } = req.body;
+    const { form_id, timestamp, data } = req.body;
     
-    console.log(`\n=== RAW DATA DARI FORM ${form_id} ===`);
-    console.log(data);
-    console.log("======================================");
+    // MENGAMBIL ID AKTA LANGSUNG DARI PAYLOAD FORM ATRBPN
+    const current_akta_id = data.aktaid;
 
-    // 1. BACA FILE JSON YANG SUDAH ADA
+    // Abaikan request jika form tidak mengandung aktaid (mencegah error)
+    if (!current_akta_id) {
+        return res.status(400).json({ error: "Form tidak memiliki aktaid" });
+    }
+
+    console.log(`\n=== RAW DATA DARI FORM ${form_id} (Akta ID: ${current_akta_id}) ===`);
+    
     let currentData = [];
     if (fs.existsSync(datasetFile)) {
         try {
@@ -49,23 +54,23 @@ app.post('/api/intercept', (req, res) => {
         }
     }
 
-    // 2. SMART MERGE: Cari apakah session_id ini sudah ada di database
-    let entryIndex = currentData.findIndex(item => item.session_id === session_id);
+    // SMART MERGE BERDASARKAN akta_id
+    let entryIndex = currentData.findIndex(item => item.akta_id === current_akta_id);
     let entry;
 
     if (entryIndex !== -1) {
-        // Jika sudah ada, gunakan objek yang lama untuk diperbarui
         entry = currentData[entryIndex];
         entry.form_source = form_id; 
     } else {
-        // Jika belum ada (sesi baru), buat kerangka baru
         entry = createBaseSchema();
-        entry.session_id = session_id;
+        entry.akta_id = current_akta_id;
         entry.form_source = form_id;
-        currentData.push(entry); // Masukkan ke dalam array
+        currentData.push(entry);
     }
 
-    // 3. LOGIKA PEMETAAN (Hanya memperbarui bagian form yang sedang diketik)
+    // ==========================================
+    // LOGIKA PEMETAAN 
+    // ==========================================
     if (form_id === 'frmEditAkta') {
         entry.output.no_akta = data.nomor || ""; 
         entry.output.tanggal_akta = data.tanggal || ""; 
@@ -90,11 +95,11 @@ app.post('/api/intercept', (req, res) => {
                 tgl_lahir: data.TANGGAL_LAHIR || "", 
                 jenis_kelamin: data.JENIS_KELAMIN || "", 
                 pekerjaan: data.JENIS_PEKERJAAN || ""
-            };
+            }; // FIX: tidak ada wrapping ganda
         }
     }
     else if (form_id === 'frmPihaksetujuDukcapil') {
-        entry.output.data_pihak_persetujuan = [{
+        const pihakBaru = {
             nik: data.NIK || "",
             nama: data.NAMA_LENGKAP || "",
             alamat: data.ALAMAT || "",
@@ -102,7 +107,17 @@ app.post('/api/intercept', (req, res) => {
             tgl_lahir: data.TANGGAL_LAHIR || "",
             jenis_kelamin: data.JENIS_KELAMIN || "",
             pekerjaan: data.JENIS_PEKERJAAN || ""
-        }];
+        };
+        // FIX: Cari berdasarkan NIK agar tidak duplikat; jika baru, push ke array
+        if (!Array.isArray(entry.output.data_pihak_persetujuan)) {
+            entry.output.data_pihak_persetujuan = [];
+        }
+        const idxPihak = entry.output.data_pihak_persetujuan.findIndex(p => p.nik && p.nik === pihakBaru.nik);
+        if (idxPihak !== -1) {
+            entry.output.data_pihak_persetujuan[idxPihak] = pihakBaru; // Update jika NIK sama
+        } else {
+            entry.output.data_pihak_persetujuan.push(pihakBaru); // Tambah ke array jika NIK baru
+        }
     }
     else if (form_id === 'frmtipepihak2Dukcapil') {
         entry.output.data_pembeli = {
@@ -141,17 +156,13 @@ app.post('/api/intercept', (req, res) => {
         };
     }
 
-    // 4. SIMPAN KEMBALI KE FILE JSON
     fs.writeFile(datasetFile, JSON.stringify(currentData, null, 4), (err) => {
-        if (err) {
-            console.error("Gagal menulis ke file:", err);
-            return res.status(500).json({ status: 'error', message: err.message });
-        }
-        console.log(`[Berhasil Diperbarui] Form: ${form_id}`);
+        if (err) return res.status(500).json({ status: 'error' });
+        console.log(`[Disimpan] ID Dokumen: ${current_akta_id}`);
         res.status(200).json({ status: 'success' });
     });
 });
 
 app.listen(3000, () => {
-    console.log('Collector Server berjalan. Menunggu data di port 3000...');
+    console.log('Collector Server berjalan dengan Smart Merge (Akta ID). Menunggu data...');
 });

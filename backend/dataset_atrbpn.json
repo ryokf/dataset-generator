@@ -1,0 +1,65 @@
+[
+    {
+        "akta_id": "570875922C993B4FE063B416140A9AE6",
+        "form_source": "frmPihaksetujuDukcapil",
+        "input_ocr": {
+            "ajb": "",
+            "npwp_penjual": "",
+            "akta_pendirian_penjual": "",
+            "ktp_persetujuan": [],
+            "ktp_pembeli": "",
+            "kk_pembeli": "",
+            "kode_berkas_cek": "",
+            "sertifikat": "",
+            "pbb": "",
+            "bphtb": "",
+            "pph": "",
+            "ktp_saksi": []
+        },
+        "output": {
+            "no_akta": "302/2026",
+            "tanggal_akta": "20/07/2026",
+            "data_penjual": {},
+            "data_pihak_persetujuan": [
+                {
+                    "nik": "",
+                    "nama": "ABDUS SHOMAD",
+                    "alamat": "",
+                    "tempat_lahir": "",
+                    "tgl_lahir": "",
+                    "jenis_kelamin": "Laki-laki",
+                    "pekerjaan": ""
+                },
+                {
+                    "nik": "3321010511670002",
+                    "nama": "ABDUS SHOMAD",
+                    "alamat": "RT 001 / RW 001, Desa Mranggen, Kecamatan Mranggen, Kabupaten Demak",
+                    "tempat_lahir": "Demak",
+                    "tgl_lahir": "05/11/1967",
+                    "jenis_kelamin": "Laki-laki",
+                    "pekerjaan": ""
+                }
+            ],
+            "data_pembeli": {},
+            "sertifikat": {
+                "nib": "",
+                "nomor_hak_atau_kode_sertif": ""
+            },
+            "pbb": {
+                "nop": "",
+                "tahun": "",
+                "luas": "",
+                "njop": ""
+            },
+            "bphtb": {
+                "no_bukti_pembayaran": ""
+            },
+            "pph": {
+                "npwp": "",
+                "no_suket": ""
+            },
+            "nilai_akta": "",
+            "data_saksi": []
+        }
+    }
+]
