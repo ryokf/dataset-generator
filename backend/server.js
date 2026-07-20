@@ -20,9 +20,9 @@ function createBaseSchema() {
         },
         output: {
             no_akta: "", tanggal_akta: "",
-            data_penjual: [], // DIUBAH MENJADI ARRAY
+            data_penjual: [], 
             data_pihak_persetujuan: [], 
-            data_pembeli: [], // DIUBAH MENJADI ARRAY
+            data_pembeli: [], 
             sertifikat: { nib: "", nomor_hak_atau_kode_sertif: "" },
             pbb: { nop: "", tahun: "", luas: "", njop: "" },
             bphtb: { no_bukti_pembayaran: "" }, pph: { npwp: "", no_suket: "" },
@@ -53,7 +53,6 @@ app.post('/api/intercept', (req, res) => {
         }
     }
 
-    // PENCARIAN DOKUMEN AKTA
     let entryIndex = currentData.findIndex(item => item.akta_id === current_akta_id);
     let entry;
 
@@ -75,8 +74,8 @@ app.post('/api/intercept', (req, res) => {
         entry.output.tanggal_akta = data.tanggal || ""; 
     } 
     
-    // 1. ARRAY MERGE UNTUK PIHAK PENJUAL
-    else if (form_id === 'frmtipepihak1Dukcapil') {
+    // 1. PENJUAL: MENCAKUP PERORANGAN DAN BADAN HUKUM
+    else if (form_id === 'frmtipepihak1Dukcapil' || form_id === 'frmInput1BadanHukum' || data.jenis === 'Pihak 1') {
         let arrPenjual = entry.output.data_penjual || [];
         let personIndex = -1;
 
@@ -84,16 +83,21 @@ app.post('/api/intercept', (req, res) => {
             personIndex = arrPenjual.findIndex(p => p._dokumen_id === data.dokumenid);
         }
 
-        const tipe = (data.tipe_entitas === '1') ? 'perorangan' : 'badan hukum';
         let personData = { _dokumen_id: data.dokumenid || "" };
 
-        if (tipe === 'badan hukum') {
+        // Deteksi Badan Hukum dari ID Form atau Tipe Pemohon
+        if (form_id === 'frmInput1BadanHukum' || data.tipepemohon === '3') {
             personData = {
                 ...personData,
                 tipe_penjual: "badan hukum",
-                jenis: data.jenis || "", tipe: data.tipe || "", nama: data.nama || "",
-                alamat: data.alamat || "", kota: data.kota || "", npwp: data.npwp || "",
-                no_akta_pendirian: data.no_akta_pendirian || "", tgl_akta_pendirian: data.tgl_akta_pendirian || ""
+                jenis: data.tipepemilikid || "", 
+                tipe: data.tipeusaha || "", 
+                nama: data.NAMA_LENGKAP || "",
+                alamat: data.ALAMAT || "", 
+                kota: data.NAMA_KABUPATEN || "", 
+                npwp: data.npwp || "",
+                no_akta_pendirian: data.nomoridentitas || "", // Menggunakan atribut asli dari ATRBPN
+                tgl_akta_pendirian: data.TANGGAL_PENDIRIAN || "" // Menggunakan atribut asli dari ATRBPN
             };
         } else {
             personData = {
@@ -116,8 +120,8 @@ app.post('/api/intercept', (req, res) => {
         entry.output.data_penjual = arrPenjual;
     }
     
-    // 2. ARRAY MERGE UNTUK PIHAK PERSETUJUAN
-    else if (form_id === 'frmPihaksetujuDukcapil') {
+    // 2. PIHAK PERSETUJUAN
+    else if (form_id === 'frmPihaksetujuDukcapil' || data.jenis === 'WNI' || data.jenis === 'WNA') {
         let arrPersetujuan = entry.output.data_pihak_persetujuan || [];
         let personIndex = -1;
 
@@ -142,8 +146,8 @@ app.post('/api/intercept', (req, res) => {
         entry.output.data_pihak_persetujuan = arrPersetujuan;
     }
     
-    // 3. ARRAY MERGE UNTUK PIHAK PEMBELI
-    else if (form_id === 'frmtipepihak2Dukcapil') {
+    // 3. PEMBELI: MENCAKUP PERORANGAN DAN BADAN HUKUM
+    else if (form_id === 'frmtipepihak2Dukcapil' || form_id === 'frmInput2BadanHukum' || data.jenis === 'Pihak 2') {
         let arrPembeli = entry.output.data_pembeli || [];
         let personIndex = -1;
 
@@ -151,16 +155,35 @@ app.post('/api/intercept', (req, res) => {
             personIndex = arrPembeli.findIndex(p => p._dokumen_id === data.dokumenid);
         }
 
-        const personData = {
-            _dokumen_id: data.dokumenid || "", 
-            nomor_identitas: data.NIK || "",
-            nama: data.NAMA_LENGKAP || "", 
-            alamat: data.ALAMAT || "", 
-            tempat_lahir: data.TEMPAT_LAHIR || "",
-            tgl_lahir: data.TANGGAL_LAHIR || "", 
-            jenis_kelamin: data.JENIS_KELAMIN || "", 
-            pekerjaan: data.JENIS_PEKERJAAN || ""
-        };
+        let personData = { _dokumen_id: data.dokumenid || "" };
+
+        if (form_id === 'frmInput2BadanHukum' || data.tipepemohon === '3') {
+            personData = {
+                ...personData,
+                tipe_pembeli: "badan hukum",
+                jenis: data.tipepemilikid || "", 
+                tipe: data.tipeusaha || "", 
+                nama: data.NAMA_LENGKAP || "", 
+                alamat: data.ALAMAT || "", 
+                kota: data.NAMA_KABUPATEN || "", 
+                npwp: data.npwp || "",
+                no_akta_pendirian: data.nomoridentitas || "", 
+                tgl_akta_pendirian: data.TANGGAL_PENDIRIAN || ""
+            };
+        } else {
+            personData = {
+                ...personData,
+                tipe_pembeli: "perorangan",
+                jenis_bukti_identitas: data.tipebuktiid || "", 
+                nomor_identitas: data.NIK || "",
+                nama: data.NAMA_LENGKAP || "", 
+                alamat: data.ALAMAT || "", 
+                tempat_lahir: data.TEMPAT_LAHIR || "",
+                tgl_lahir: data.TANGGAL_LAHIR || "", 
+                jenis_kelamin: data.JENIS_KELAMIN || "", 
+                pekerjaan: data.JENIS_PEKERJAAN || ""
+            };
+        }
 
         if (personIndex !== -1) arrPembeli[personIndex] = { ...arrPembeli[personIndex], ...personData };
         else arrPembeli.push(personData);
@@ -197,11 +220,11 @@ app.post('/api/intercept', (req, res) => {
     // SIMPAN KEMBALI KE FILE JSON
     fs.writeFile(datasetFile, JSON.stringify(currentData, null, 4), (err) => {
         if (err) return res.status(500).json({ status: 'error' });
-        console.log(`[Disimpan - Merge Array] ID Dokumen: ${current_akta_id}`);
+        console.log(`[Disimpan - Berhasil] ID Dokumen: ${current_akta_id} | Dari: ${form_id}`);
         res.status(200).json({ status: 'success' });
     });
 });
 
 app.listen(3000, () => {
-    console.log('Collector Server berjalan dengan Smart Array Merge. Menunggu data...');
+    console.log('Collector Server berjalan. Menunggu data...');
 });

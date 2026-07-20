@@ -1,7 +1,7 @@
 [
     {
         "akta_id": "5708746AD1903864E063B416140A4EAD",
-        "form_source": "frmPihaksetujuDukcapil",
+        "form_source": "frmHAT",
         "input_ocr": {
             "ajb": "",
             "npwp_penjual": "",
@@ -19,7 +19,20 @@
         "output": {
             "no_akta": "274/2026",
             "tanggal_akta": "22/06/2026",
-            "data_penjual": {},
+            "data_penjual": [
+                {
+                    "_dokumen_id": "",
+                    "tipe_penjual": "badan hukum",
+                    "jenis": "33",
+                    "tipe": "4",
+                    "nama": "PT. AMANAH BERKAH PROPERTY",
+                    "alamat": "Mangunjiwan, RT 000/RW 000, Kelurahan Mangunjiwan, Kecamatan Demak, Kabupaten Demak, Jawa Tengah Demak Demak",
+                    "kota": "Demak",
+                    "npwp": "0027724004515000",
+                    "no_akta_pendirian": "228",
+                    "tgl_akta_pendirian": "18/12/2023"
+                }
+            ],
             "data_pihak_persetujuan": [
                 {
                     "nik": "3321111409030002",
@@ -40,7 +53,145 @@
                     "pekerjaan": ""
                 }
             ],
-            "data_pembeli": {},
+            "data_pembeli": [
+                {
+                    "_dokumen_id": "",
+                    "tipe_pembeli": "perorangan",
+                    "jenis_bukti_identitas": "1",
+                    "nomor_identitas": "3321111406980001",
+                    "nama": "SUTIYONO",
+                    "alamat": "Gesik, RT 001/RW 005, Desa Bolo, Kecamatan Demak, Kabupaten Demak, Jawa Tengah",
+                    "tempat_lahir": "Demak",
+                    "tgl_lahir": "14/06/1998",
+                    "jenis_kelamin": "Laki-laki",
+                    "pekerjaan": ""
+                }
+            ],
+            "sertifikat": {
+                "nib": "06088",
+                "nomor_hak_atau_kode_sertif": "11.09.12.04.3.01686"
+            },
+            "pbb": {
+                "nop": "",
+                "tahun": "",
+                "luas": "",
+                "njop": ""
+            },
+            "bphtb": {
+                "no_bukti_pembayaran": ""
+            },
+            "pph": {
+                "npwp": "",
+                "no_suket": ""
+            },
+            "nilai_akta": "",
+            "data_saksi": []
+        }
+    },
+    {
+        "akta_id": "5701D4F3151C154CE063B416140A611F",
+        "form_source": "frmInput1BadanHukum",
+        "input_ocr": {
+            "ajb": "",
+            "npwp_penjual": "",
+            "akta_pendirian_penjual": "",
+            "ktp_persetujuan": [],
+            "ktp_pembeli": "",
+            "kk_pembeli": "",
+            "kode_berkas_cek": "",
+            "sertifikat": "",
+            "pbb": "",
+            "bphtb": "",
+            "pph": "",
+            "ktp_saksi": []
+        },
+        "output": {
+            "no_akta": "305/2026",
+            "tanggal_akta": "26/06/2026",
+            "data_penjual": [
+                {
+                    "_dokumen_id": "",
+                    "tipe_penjual": "badan hukum",
+                    "jenis": "33",
+                    "tipe": "4",
+                    "nama": "PT Dwi Perkasa Utama",
+                    "alamat": "Jl. Raya Mranggen No. 30, RT 001 / RW 001, Desa Mranggen, Kecamatan Mranggen, Kabupaten Demak, Jawa Tengah",
+                    "kota": "Demak",
+                    "npwp": "0027724004515000",
+                    "no_akta_pendirian": "01",
+                    "tgl_akta_pendirian": "02/08/2010"
+                }
+            ],
+            "data_pihak_persetujuan": [],
+            "data_pembeli": [],
+            "sertifikat": {
+                "nib": "",
+                "nomor_hak_atau_kode_sertif": ""
+            },
+            "pbb": {
+                "nop": "",
+                "tahun": "",
+                "luas": "",
+                "njop": ""
+            },
+            "bphtb": {
+                "no_bukti_pembayaran": ""
+            },
+            "pph": {
+                "npwp": "",
+                "no_suket": ""
+            },
+            "nilai_akta": "",
+            "data_saksi": []
+        }
+    },
+    {
+        "akta_id": "56F0281160AC343BE063B516140A8F04",
+        "form_source": "frmPihaksetujuDukcapil",
+        "input_ocr": {
+            "ajb": "",
+            "npwp_penjual": "",
+            "akta_pendirian_penjual": "",
+            "ktp_persetujuan": [],
+            "ktp_pembeli": "",
+            "kk_pembeli": "",
+            "kode_berkas_cek": "",
+            "sertifikat": "",
+            "pbb": "",
+            "bphtb": "",
+            "pph": "",
+            "ktp_saksi": []
+        },
+        "output": {
+            "no_akta": "307/2026",
+            "tanggal_akta": "26/06/2026",
+            "data_penjual": [
+                {
+                    "_dokumen_id": "",
+                    "tipe_penjual": "badan hukum",
+                    "jenis": "33",
+                    "tipe": "4",
+                    "nama": "PT Dwi Perkasa Utama",
+                    "alamat": "Jl. Raya Mranggen No. 30, RT 001 / RW 001, Desa Mranggen, Kecamatan Mranggen, Kabupaten Demak, Jawa Tengah Demak",
+                    "kota": "Demak",
+                    "npwp": "0027724004515000",
+                    "no_akta_pendirian": "01",
+                    "tgl_akta_pendirian": "02/08/2010"
+                }
+            ],
+            "data_pihak_persetujuan": [
+                {
+                    "_dokumen_id": "a3957518802644128b7116880adcd042",
+                    "nik": "3321012106950001",
+                    "nama": "RIYANDIKA YUSUF ASHARI",
+                    "alamat": "Jl. Batursari Raya No. 09, RT 005 / RW 003, Desa Batursari, Kecamatan Mranggen, Kabupaten Demak",
+                    "tempat_lahir": "Demak",
+                    "tgl_lahir": "21/06/1995",
+                    "jenis_kelamin": "Laki-laki",
+                    "pekerjaan": ""
+                }
+            ],
+            "data_pembeli": [],
             "sertifikat": {
                 "nib": "",
                 "nomor_hak_atau_kode_sertif": ""
