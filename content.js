@@ -41,6 +41,7 @@ function kirimKeLocalServer(payload) {
     fetch('http://localhost:3000/api/intercept', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
+        body: JSON.stringify(payload),
+        keepalive: true
     }).catch(err => console.error("Gagal mengirim data ke server lokal:", err));
 }
