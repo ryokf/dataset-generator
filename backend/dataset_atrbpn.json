@@ -215,7 +215,7 @@
     },
     {
         "akta_id": "57087514818D0472E063B516140A0738",
-        "form_source": "frmNilaiAkta",
+        "form_source": "frmSaksiDukcapil",
         "input_ocr": {
             "ajb": "",
             "npwp_penjual": "",
@@ -299,7 +299,17 @@
                 "no_suket": "KET-02718/PHTB-CT/KPP.1012/2026"
             },
             "nilai_akta": "166,000,000",
-            "data_saksi": []
+            "data_saksi": [
+                {
+                    "nik": "3321046311970003",
+                    "nama": "NOVIA MAHARSARI",
+                    "alamat": "Kabupaten Pati, Dukuh Ngobongan, Rukun Tetangga 003, Rukun Warga 003, Desa Tanjungsekar, Pecaristan",
+                    "tempat_lahir": "Semarang",
+                    "tgl_lahir": "23/11/1997",
+                    "jenis_kelamin": "Perempuan",
+                    "pekerjaan": ""
+                }
+            ]
         }
     }
 ]

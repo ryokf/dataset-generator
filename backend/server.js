@@ -74,7 +74,6 @@ app.post('/api/intercept', (req, res) => {
     
     // 1. IDENTITAS AKTA
     if (form_id === 'frmEditAkta') {
-        // Hanya update jika data benar-benar ada di form ini (mencegah overwrite jadi kosong)
         if (data.nomor !== undefined) entry.output.no_akta = data.nomor; 
         if (data.tanggal !== undefined) entry.output.tanggal_akta = data.tanggal; 
     } 
@@ -190,7 +189,37 @@ app.post('/api/intercept', (req, res) => {
         entry.output.data_pembeli = arrPembeli;
     }
 
-    // 5. MAPPING SERTIPIKAT (Dengan proteksi Anti-Overwrite)
+    // 5. PIHAK SAKSI
+    else if (form_id === 'frmSaksiDukcapil' || data.jenis === 'Saksi') {
+        let arrSaksi = Array.isArray(entry.output.data_saksi) ? entry.output.data_saksi : [];
+        let personIndex = -1;
+
+        const currentNik = (data.NIK || "").trim();
+        const currentNama = (data.NAMA_LENGKAP || data.nama || "").trim();
+
+        if (currentNik !== "") {
+            personIndex = arrSaksi.findIndex(p => p.nik === currentNik);
+        } else if (currentNama !== "") {
+            personIndex = arrSaksi.findIndex(p => p.nama === currentNama);
+        }
+
+        const personData = {
+            nik: currentNik,
+            nama: currentNama,
+            alamat: data.ALAMAT || "",
+            tempat_lahir: data.TEMPAT_LAHIR || "",
+            tgl_lahir: data.TANGGAL_LAHIR || "",
+            jenis_kelamin: data.JENIS_KELAMIN || "",
+            pekerjaan: data.JENIS_PEKERJAAN || ""
+        };
+
+        if (personIndex !== -1) arrSaksi[personIndex] = { ...arrSaksi[personIndex], ...personData };
+        else arrSaksi.push(personData);
+        
+        entry.output.data_saksi = arrSaksi;
+    }
+
+    // 6. MAPPING SERTIPIKAT
     else if (form_id === 'frmHAT' || data.jenisdokumen === 'AJB') {
         entry.output.sertifikat = {
             nib: data.nibelektronik || data.nib || entry.output.sertifikat.nib || "",
@@ -198,7 +227,7 @@ app.post('/api/intercept', (req, res) => {
         };
     }
     
-    // 6. MAPPING PAJAK PBB, BPHTB, PPH (Dengan proteksi Anti-Overwrite)
+    // 7. MAPPING PAJAK PBB, BPHTB, PPH
     else if (form_id === 'frmPBBDetail' || data.tipedokumen === 'PBB') {
         entry.output.pbb = { 
             nop: data.nomor || entry.output.pbb.nop || "", 
