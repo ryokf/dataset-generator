@@ -45,11 +45,9 @@ app.post('/api/intercept', (req, res) => {
     if (fs.existsSync(datasetFile)) {
         try {
             const fileContent = fs.readFileSync(datasetFile, 'utf8');
-            if (fileContent.trim() !== '') {
-                currentData = JSON.parse(fileContent);
-            }
+            if (fileContent.trim() !== '') currentData = JSON.parse(fileContent);
         } catch (err) {
-            console.error("Gagal membaca file JSON sebelumnya:", err);
+            console.error("Gagal membaca JSON:", err);
         }
     }
 
@@ -67,50 +65,48 @@ app.post('/api/intercept', (req, res) => {
     }
 
     // ==========================================
-    // LOGIKA PEMETAAN (MAPPING) DENGAN ARRAY MERGE
+    // LOGIKA PEMETAAN KOKOH 
     // ==========================================
-    if (form_id === 'frmEditAkta') {
+    
+    // 1. IDENTITAS AKTA
+    if (form_id === 'frmEditAkta' || data.tipe === 'AJB') {
         entry.output.no_akta = data.nomor || ""; 
         entry.output.tanggal_akta = data.tanggal || ""; 
     } 
     
-    // 1. PENJUAL: MENCAKUP PERORANGAN DAN BADAN HUKUM
+    // 2. PIHAK PENJUAL
     else if (form_id === 'frmtipepihak1Dukcapil' || form_id === 'frmInput1BadanHukum' || data.jenis === 'Pihak 1') {
-        let arrPenjual = entry.output.data_penjual || [];
+        let arrPenjual = Array.isArray(entry.output.data_penjual) ? entry.output.data_penjual : [];
         let personIndex = -1;
 
-        if (data.dokumenid && data.dokumenid.trim() !== "") {
-            personIndex = arrPenjual.findIndex(p => p._dokumen_id === data.dokumenid);
+        const currentNik = (data.NIK || "").trim();
+        const currentNoAkta = (data.nomoridentitas || "").trim();
+        const currentNama = (data.NAMA_LENGKAP || data.nama || "").trim();
+
+        if (currentNik !== "") {
+            personIndex = arrPenjual.findIndex(p => p.nomor_identitas === currentNik);
+        } else if (currentNoAkta !== "") {
+            personIndex = arrPenjual.findIndex(p => p.no_akta_pendirian === currentNoAkta);
+        } else if (currentNama !== "") {
+            personIndex = arrPenjual.findIndex(p => p.nama === currentNama);
         }
 
-        let personData = { _dokumen_id: data.dokumenid || "" };
+        const tipe = (data.tipepemohon === '1') ? 'perorangan' : 'badan hukum';
+        let personData = {};
 
-        // Deteksi Badan Hukum dari ID Form atau Tipe Pemohon
-        if (form_id === 'frmInput1BadanHukum' || data.tipepemohon === '3') {
+        if (tipe === 'badan hukum') {
             personData = {
-                ...personData,
                 tipe_penjual: "badan hukum",
-                jenis: data.tipepemilikid || "", 
-                tipe: data.tipeusaha || "", 
-                nama: data.NAMA_LENGKAP || "",
-                alamat: data.ALAMAT || "", 
-                kota: data.NAMA_KABUPATEN || "", 
-                npwp: data.npwp || "",
-                no_akta_pendirian: data.nomoridentitas || "", // Menggunakan atribut asli dari ATRBPN
-                tgl_akta_pendirian: data.TANGGAL_PENDIRIAN || "" // Menggunakan atribut asli dari ATRBPN
+                jenis: data.tipepemilikid || "", tipe: data.tipeusaha || "", nama: currentNama,
+                alamat: data.alamat || data.ALAMAT || "", kota: data.kota || data.NAMA_KABUPATEN || "", 
+                npwp: data.npwp || "", no_akta_pendirian: currentNoAkta, tgl_akta_pendirian: data.TANGGAL_PENDIRIAN || ""
             };
         } else {
             personData = {
-                ...personData,
                 tipe_penjual: "perorangan",
-                jenis_bukti_identitas: data.tipebuktiid || "", 
-                nomor_identitas: data.NIK || "",
-                nama: data.NAMA_LENGKAP || "", 
-                alamat: data.ALAMAT || "", 
-                tempat_lahir: data.TEMPAT_LAHIR || "",
-                tgl_lahir: data.TANGGAL_LAHIR || "", 
-                jenis_kelamin: data.JENIS_KELAMIN || "", 
-                pekerjaan: data.JENIS_PEKERJAAN || ""
+                jenis_bukti_identitas: data.tipebuktiid || "", nomor_identitas: currentNik,
+                nama: currentNama, alamat: data.ALAMAT || "", tempat_lahir: data.TEMPAT_LAHIR || "",
+                tgl_lahir: data.TANGGAL_LAHIR || "", jenis_kelamin: data.JENIS_KELAMIN || "", pekerjaan: data.JENIS_PEKERJAAN || ""
             };
         }
 
@@ -120,23 +116,24 @@ app.post('/api/intercept', (req, res) => {
         entry.output.data_penjual = arrPenjual;
     }
     
-    // 2. PIHAK PERSETUJUAN
+    // 3. PIHAK PERSETUJUAN
     else if (form_id === 'frmPihaksetujuDukcapil' || data.jenis === 'WNI' || data.jenis === 'WNA') {
-        let arrPersetujuan = entry.output.data_pihak_persetujuan || [];
+        let arrPersetujuan = Array.isArray(entry.output.data_pihak_persetujuan) ? entry.output.data_pihak_persetujuan : [];
         let personIndex = -1;
 
-        if (data.dokumenid && data.dokumenid.trim() !== "") {
-            personIndex = arrPersetujuan.findIndex(p => p._dokumen_id === data.dokumenid);
+        const currentNik = (data.NIK || "").trim();
+        const currentNama = (data.NAMA_LENGKAP || "").trim();
+
+        if (currentNik !== "") {
+            personIndex = arrPersetujuan.findIndex(p => p.nik === currentNik);
+        } else if (currentNama !== "") {
+            personIndex = arrPersetujuan.findIndex(p => p.nama === currentNama);
         }
 
         const personData = {
-            _dokumen_id: data.dokumenid || "", 
-            nik: data.NIK || "",
-            nama: data.NAMA_LENGKAP || "",
-            alamat: data.ALAMAT || "",
-            tempat_lahir: data.TEMPAT_LAHIR || "",
-            tgl_lahir: data.TANGGAL_LAHIR || "",
-            jenis_kelamin: data.JENIS_KELAMIN || "",
+            nik: currentNik, nama: currentNama,
+            alamat: data.ALAMAT || "", tempat_lahir: data.TEMPAT_LAHIR || "",
+            tgl_lahir: data.TANGGAL_LAHIR || "", jenis_kelamin: data.JENIS_KELAMIN || "",
             pekerjaan: data.JENIS_PEKERJAAN || ""
         };
 
@@ -146,42 +143,39 @@ app.post('/api/intercept', (req, res) => {
         entry.output.data_pihak_persetujuan = arrPersetujuan;
     }
     
-    // 3. PEMBELI: MENCAKUP PERORANGAN DAN BADAN HUKUM
+    // 4. PIHAK PEMBELI
     else if (form_id === 'frmtipepihak2Dukcapil' || form_id === 'frmInput2BadanHukum' || data.jenis === 'Pihak 2') {
-        let arrPembeli = entry.output.data_pembeli || [];
+        let arrPembeli = Array.isArray(entry.output.data_pembeli) ? entry.output.data_pembeli : [];
         let personIndex = -1;
 
-        if (data.dokumenid && data.dokumenid.trim() !== "") {
-            personIndex = arrPembeli.findIndex(p => p._dokumen_id === data.dokumenid);
+        const currentNik = (data.NIK || "").trim();
+        const currentNoAkta = (data.nomoridentitas || "").trim();
+        const currentNama = (data.NAMA_LENGKAP || data.nama || "").trim();
+
+        if (currentNik !== "") {
+            personIndex = arrPembeli.findIndex(p => p.nomor_identitas === currentNik);
+        } else if (currentNoAkta !== "") {
+            personIndex = arrPembeli.findIndex(p => p.no_akta_pendirian === currentNoAkta);
+        } else if (currentNama !== "") {
+            personIndex = arrPembeli.findIndex(p => p.nama === currentNama);
         }
 
-        let personData = { _dokumen_id: data.dokumenid || "" };
+        const tipe = (data.tipepemohon === '1') ? 'perorangan' : 'badan hukum';
+        let personData = {};
 
-        if (form_id === 'frmInput2BadanHukum' || data.tipepemohon === '3') {
+        if (tipe === 'badan hukum') {
             personData = {
-                ...personData,
                 tipe_pembeli: "badan hukum",
-                jenis: data.tipepemilikid || "", 
-                tipe: data.tipeusaha || "", 
-                nama: data.NAMA_LENGKAP || "", 
-                alamat: data.ALAMAT || "", 
-                kota: data.NAMA_KABUPATEN || "", 
-                npwp: data.npwp || "",
-                no_akta_pendirian: data.nomoridentitas || "", 
-                tgl_akta_pendirian: data.TANGGAL_PENDIRIAN || ""
+                jenis: data.tipepemilikid || "", tipe: data.tipeusaha || "", nama: currentNama, 
+                alamat: data.alamat || data.ALAMAT || "", kota: data.kota || data.NAMA_KABUPATEN || "", 
+                npwp: data.npwp || "", no_akta_pendirian: currentNoAkta, tgl_akta_pendirian: data.TANGGAL_PENDIRIAN || ""
             };
         } else {
             personData = {
-                ...personData,
                 tipe_pembeli: "perorangan",
-                jenis_bukti_identitas: data.tipebuktiid || "", 
-                nomor_identitas: data.NIK || "",
-                nama: data.NAMA_LENGKAP || "", 
-                alamat: data.ALAMAT || "", 
-                tempat_lahir: data.TEMPAT_LAHIR || "",
-                tgl_lahir: data.TANGGAL_LAHIR || "", 
-                jenis_kelamin: data.JENIS_KELAMIN || "", 
-                pekerjaan: data.JENIS_PEKERJAAN || ""
+                jenis_bukti_identitas: data.tipebuktiid || "", nomor_identitas: currentNik,
+                nama: currentNama, alamat: data.ALAMAT || "", tempat_lahir: data.TEMPAT_LAHIR || "",
+                tgl_lahir: data.TANGGAL_LAHIR || "", jenis_kelamin: data.JENIS_KELAMIN || "", pekerjaan: data.JENIS_PEKERJAAN || ""
             };
         }
 
@@ -191,36 +185,31 @@ app.post('/api/intercept', (req, res) => {
         entry.output.data_pembeli = arrPembeli;
     }
 
-    else if (form_id === 'frmHAT') {
+    // 5. MAPPING SERTIPIKAT (Mendukung Manual & Elektronik)
+    else if (form_id === 'frmHAT' || data.jenisdokumen === 'AJB') {
         entry.output.sertifikat = {
-            nib: data.nib || "",
-            nomor_hak_atau_kode_sertif: data.nomorhak || ""
+            // Jika nibelektronik ada (sertif elektronik), gunakan itu. Jika tidak, gunakan nib (sertif manual).
+            nib: data.nibelektronik || data.nib || "",
+            // Jika kodesertipikat ada, gunakan itu. Jika tidak, gunakan nomorhak.
+            nomor_hak_atau_kode_sertif: data.kodesertipikat || data.nomorhak || ""
         };
     }
-    else if (form_id === 'frmPBBDetail') {
-        entry.output.pbb = {
-            nop: data.nomor || "",
-            tahun: data.tahun || "",
-            luas: data.luas || "",
-            njop: data.nilai || ""
-        };
+    
+    // 6. MAPPING PAJAK PBB, BPHTB, PPH
+    else if (form_id === 'frmPBBDetail' || data.tipedokumen === 'PBB') {
+        entry.output.pbb = { nop: data.nomor || "", tahun: data.tahun || "", luas: data.luas || "", njop: data.nilai || "" };
     }
-    else if (form_id === 'frmBPHTB') {
-        entry.output.bphtb = {
-            no_bukti_pembayaran: data.nomorbphtb || ""
-        };
+    else if (form_id === 'frmBPHTB' || data.statusbphtb !== undefined) {
+        entry.output.bphtb = { no_bukti_pembayaran: data.nomorbphtb || "" };
     }
-    else if (form_id === 'frmSurat') {
-        entry.output.pph = {
-            npwp: data.npwp || "",
-            no_suket: data.kodeverifikasi || ""
-        };
+    else if (form_id === 'frmSurat' || data.tipedokumen === 'SSP') {
+        entry.output.pph = { npwp: data.npwp || "", no_suket: data.kodeverifikasi || "" };
     }
 
     // SIMPAN KEMBALI KE FILE JSON
     fs.writeFile(datasetFile, JSON.stringify(currentData, null, 4), (err) => {
         if (err) return res.status(500).json({ status: 'error' });
-        console.log(`[Disimpan - Berhasil] ID Dokumen: ${current_akta_id} | Dari: ${form_id}`);
+        console.log(`[Disimpan] ID Dokumen: ${current_akta_id} | Dari: ${form_id}`);
         res.status(200).json({ status: 'success' });
     });
 });

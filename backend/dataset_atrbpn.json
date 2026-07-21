@@ -212,5 +212,94 @@
             "nilai_akta": "",
             "data_saksi": []
         }
+    },
+    {
+        "akta_id": "57087514818D0472E063B516140A0738",
+        "form_source": "frmNilaiAkta",
+        "input_ocr": {
+            "ajb": "",
+            "npwp_penjual": "",
+            "akta_pendirian_penjual": "",
+            "ktp_persetujuan": [],
+            "ktp_pembeli": "",
+            "kk_pembeli": "",
+            "kode_berkas_cek": "",
+            "sertifikat": "",
+            "pbb": "",
+            "bphtb": "",
+            "pph": "",
+            "ktp_saksi": []
+        },
+        "output": {
+            "no_akta": "",
+            "tanggal_akta": "",
+            "data_penjual": [
+                {
+                    "_dokumen_id": "",
+                    "tipe_penjual": "badan hukum",
+                    "jenis": "33",
+                    "tipe": "4",
+                    "nama": "PT Dwi Perkasa Utama",
+                    "alamat": "Jl. Raya Mranggen No. 30, RT 001 / RW 001, Desa Mranggen, Kecamatan Mranggen, Kabupaten Demak, Jawa Tengah",
+                    "kota": "Demak",
+                    "npwp": "027724004515000",
+                    "no_akta_pendirian": "01",
+                    "tgl_akta_pendirian": "02/08/2010"
+                }
+            ],
+            "data_pihak_persetujuan": [
+                {
+                    "_dokumen_id": "d6e55425219b493caa59ab7854b2ab6d",
+                    "nik": "3321034309830003",
+                    "nama": "JUMAIDAH SUGIHARTI",
+                    "alamat": "Jetis, RT 005 / RW 002, Desa Tamansari, Kecamatan Mranggen, Kabupaten Demak",
+                    "tempat_lahir": "Demak",
+                    "tgl_lahir": "03/09/1983",
+                    "jenis_kelamin": "Perempuan",
+                    "pekerjaan": ""
+                },
+                {
+                    "nik": "3321012106950001",
+                    "nama": "RIYANDIKA YUSUF ASHARI",
+                    "alamat": "Jl. Batursari Raya No. 09, RT 005 / RW 003, Desa Batursari, Kecamatan Mranggen, Kabupaten Demak",
+                    "tempat_lahir": "Demak",
+                    "tgl_lahir": "21/06/1995",
+                    "jenis_kelamin": "Laki-laki",
+                    "pekerjaan": ""
+                }
+            ],
+            "data_pembeli": [
+                {
+                    "tipe_pembeli": "perorangan",
+                    "jenis_bukti_identitas": "1",
+                    "nomor_identitas": "3374022911940001",
+                    "nama": "TRI ARIYANTO",
+                    "alamat": "Kaba Utara RT 006/RW 012, Kelurahan Tandang, Kecamatan Tembalang, Kota Semarang, Jawa Tengah, Kode Pos 50274",
+                    "tempat_lahir": "Semarang",
+                    "tgl_lahir": "29/11/1994",
+                    "jenis_kelamin": "Laki-laki",
+                    "pekerjaan": ""
+                }
+            ],
+            "sertifikat": {
+                "nib": "11090000323760",
+                "nomor_hak_atau_kode_sertif": "WR5QRG"
+            },
+            "pbb": {
+                "nop": "332101000900100160",
+                "tahun": "2024",
+                "luas": "60",
+                "njop": "394000"
+            },
+            "bphtb": {
+                "no_bukti_pembayaran": "21120268149"
+            },
+            "pph": {
+                "npwp": "0027724004515000",
+                "no_suket": "KET-02718/PHTB-CT/KPP.1012/2026"
+            },
+            "nilai_akta": "",
+            "data_saksi": []
+        }
     }
 ]
