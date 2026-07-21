@@ -65,13 +65,18 @@ app.post('/api/intercept', (req, res) => {
     }
 
     // ==========================================
-    // LOGIKA PEMETAAN KOKOH 
+    // LOGIKA PEMETAAN KOKOH (ANTI-OVERWRITE)
     // ==========================================
+
+    // 0. GLOBAL CATCHER: Tangkap Nilai Akta dari form manapun ia berada!
+    if (data.nilaiakta !== undefined) entry.output.nilai_akta = data.nilaiakta;
+    if (data.nilai_akta !== undefined) entry.output.nilai_akta = data.nilai_akta;
     
     // 1. IDENTITAS AKTA
-    if (form_id === 'frmEditAkta' || data.tipe === 'AJB') {
-        entry.output.no_akta = data.nomor || ""; 
-        entry.output.tanggal_akta = data.tanggal || ""; 
+    if (form_id === 'frmEditAkta') {
+        // Hanya update jika data benar-benar ada di form ini (mencegah overwrite jadi kosong)
+        if (data.nomor !== undefined) entry.output.no_akta = data.nomor; 
+        if (data.tanggal !== undefined) entry.output.tanggal_akta = data.tanggal; 
     } 
     
     // 2. PIHAK PENJUAL
@@ -185,25 +190,31 @@ app.post('/api/intercept', (req, res) => {
         entry.output.data_pembeli = arrPembeli;
     }
 
-    // 5. MAPPING SERTIPIKAT (Mendukung Manual & Elektronik)
+    // 5. MAPPING SERTIPIKAT (Dengan proteksi Anti-Overwrite)
     else if (form_id === 'frmHAT' || data.jenisdokumen === 'AJB') {
         entry.output.sertifikat = {
-            // Jika nibelektronik ada (sertif elektronik), gunakan itu. Jika tidak, gunakan nib (sertif manual).
-            nib: data.nibelektronik || data.nib || "",
-            // Jika kodesertipikat ada, gunakan itu. Jika tidak, gunakan nomorhak.
-            nomor_hak_atau_kode_sertif: data.kodesertipikat || data.nomorhak || ""
+            nib: data.nibelektronik || data.nib || entry.output.sertifikat.nib || "",
+            nomor_hak_atau_kode_sertif: data.kodesertipikat || data.nomorhak || entry.output.sertifikat.nomor_hak_atau_kode_sertif || ""
         };
     }
     
-    // 6. MAPPING PAJAK PBB, BPHTB, PPH
+    // 6. MAPPING PAJAK PBB, BPHTB, PPH (Dengan proteksi Anti-Overwrite)
     else if (form_id === 'frmPBBDetail' || data.tipedokumen === 'PBB') {
-        entry.output.pbb = { nop: data.nomor || "", tahun: data.tahun || "", luas: data.luas || "", njop: data.nilai || "" };
+        entry.output.pbb = { 
+            nop: data.nomor || entry.output.pbb.nop || "", 
+            tahun: data.tahun || entry.output.pbb.tahun || "", 
+            luas: data.luas || entry.output.pbb.luas || "", 
+            njop: data.nilai || entry.output.pbb.njop || "" 
+        };
     }
     else if (form_id === 'frmBPHTB' || data.statusbphtb !== undefined) {
-        entry.output.bphtb = { no_bukti_pembayaran: data.nomorbphtb || "" };
+        entry.output.bphtb = { no_bukti_pembayaran: data.nomorbphtb || entry.output.bphtb.no_bukti_pembayaran || "" };
     }
     else if (form_id === 'frmSurat' || data.tipedokumen === 'SSP') {
-        entry.output.pph = { npwp: data.npwp || "", no_suket: data.kodeverifikasi || "" };
+        entry.output.pph = { 
+            npwp: data.npwp || entry.output.pph.npwp || "", 
+            no_suket: data.kodeverifikasi || entry.output.pph.no_suket || "" 
+        };
     }
 
     // SIMPAN KEMBALI KE FILE JSON
